@@ -1,0 +1,26 @@
+# Terraform
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+terraform-key.pem
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+venv/
+env/
+
+# Django
+*.log
+db.sqlite3
+
+# Secrets
+*.key
+secrets/
+
+# OS
+.DS_Store
