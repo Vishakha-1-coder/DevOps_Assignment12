@@ -1,26 +1,19 @@
+
+__pycache__/
+*.pyc
+
 # Terraform
-*.tfstate
-*.tfstate.*
-*.tfstate.backup
 .terraform/
-.terraform.lock.hcl
-terraform-key.pem
+terraform.tfstate
+terraform.tfstate.backup
 *.pem
 
-# Python
-__pycache__/
-*.py[cod]
-*.pyc
-venv/
-env/
-
 # Django
-*.log
 db.sqlite3
 
-# Secrets
-*.key
-secrets/
+# Logs
+*.log
 
 # OS
 .DS_Store
+
