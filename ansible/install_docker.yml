@@ -1,0 +1,35 @@
+---
+- name: Install Docker correctly on Amazon Linux 2
+  hosts: all
+  become: yes
+  tasks:
+    - name: Remove old Docker repo if present
+      file:
+        path: /etc/yum.repos.d/docker-ce.repo
+        state: absent
+      ignore_errors: yes
+
+    - name: Clean yum cache
+      command: yum clean all
+      ignore_errors: yes
+
+    - name: Enable Docker in Amazon Linux Extras
+      command: amazon-linux-extras enable docker
+      ignore_errors: yes
+
+    - name: Install Docker from Amazon Linux Extras
+      command: yum install -y docker
+      ignore_errors: yes
+
+    - name: Start and enable Docker service
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add ec2-user to docker group
+      user:
+        name: ec2-user
+        groups: docker
+        append: yes
+

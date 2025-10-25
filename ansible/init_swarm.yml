@@ -1,0 +1,45 @@
+---
+- name: Initialize Docker Swarm on manager node
+  hosts: manager
+  become: true
+  vars:
+    ansible_ssh_private_key_file: ~/.ssh/terraform-key.pem
+  tasks:
+    - name: Gather facts
+      ansible.builtin.setup:
+
+    - name: Initialize Docker Swarm
+      ansible.builtin.shell: docker swarm init
+      register: swarm_init
+      ignore_errors: yes
+
+    - name: Get worker join token
+      ansible.builtin.shell: docker swarm join-token -q worker
+      register: worker_token
+
+    - name: Save token to file
+      ansible.builtin.copy:
+        content: "{{ worker_token.stdout }}"
+        dest: /tmp/swarm_token.txt
+        mode: '0644'
+
+- name: Join worker nodes to the Swarm
+  hosts: workers
+  become: true
+  vars:
+    ansible_ssh_private_key_file: ~/.ssh/terraform-key.pem
+  tasks:
+    - name: Gather facts
+      ansible.builtin.setup:
+
+    - name: Copy token from manager
+      ansible.builtin.fetch:
+        src: /tmp/swarm_token.txt
+        dest: /tmp/swarm_token.txt
+        flat: yes
+      delegate_to: 107.20.161.202  # Replace with manager IP
+
+    - name: Join swarm as worker
+      ansible.builtin.shell: >
+        docker swarm join --token $(cat /tmp/swarm_token.txt) 107.20.161.202:2377
+

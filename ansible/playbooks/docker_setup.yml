@@ -1,0 +1,28 @@
+---
+- name: Install Docker on all servers
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install required packages
+      yum:
+        name:
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
+        state: present
+
+    - name: Add Docker repo
+      command: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+      args:
+        creates: /etc/yum.repos.d/docker-ce.repo
+
+    - name: Install Docker
+      yum:
+        name: docker-ce
+        state: present
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes

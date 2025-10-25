@@ -1,0 +1,11 @@
+---
+- name: Create a devops user on all servers
+  hosts: all
+  become: yes
+  tasks:
+    - name: Add user "devops"
+      user:
+        name: devops
+        shell: /bin/bash
+        state: present
+        groups: wheel

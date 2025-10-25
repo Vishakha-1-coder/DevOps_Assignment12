@@ -1,0 +1,9 @@
+---
+- name: Install htop on all servers
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install htop
+      package:
+        name: htop
+        state: present

@@ -1,5 +1,5 @@
 output "controller_ip" {
-  value = aws_instance.controller.public_ip
+  value = aws_eip.controller_eip.public_ip
 }
 
 output "manager_ip" {
