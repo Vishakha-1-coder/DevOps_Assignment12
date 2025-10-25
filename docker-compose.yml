@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  web:
+    image: vishakhak1/django-app:latest
+    ports:
+      - "8080:8000"
+    networks:
+      - myapp_app-net
+    depends_on:
+      - db
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_NAME=postgres
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=postgres
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - myapp_app-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+networks:
+  myapp_app-net:
+    external: true
+
+volumes:
+  pgdata:
+

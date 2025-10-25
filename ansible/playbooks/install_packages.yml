@@ -1,0 +1,53 @@
+---
+- name: Install and start Nginx on all hosts
+  hosts: all
+  become: yes
+  tasks:
+
+    - name: Gather OS facts
+      ansible.builtin.setup:
+
+    - name: Install Nginx on Debian/Ubuntu
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: yes
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Install Nginx on RedHat/CentOS
+      ansible.builtin.yum:
+        name: nginx
+        state: present
+      when: ansible_facts['os_family'] == "RedHat"
+
+    - name: Ensure Nginx web root exists
+      ansible.builtin.file:
+        path: /var/www/html
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Deploy custom index.html
+      ansible.builtin.copy:
+        dest: /var/www/html/index.html
+        content: |
+          <!DOCTYPE html>
+          <html>
+          <head>
+          <title>Welcome to My Server!</title>
+          </head>
+          <body>
+          <h1>Hello from Ansible Deployed Nginx!</h1>
+          <p>This page is managed automatically using Ansible.</p>
+          </body>
+          </html>
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Ensure Nginx is started and enabled
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: yes
